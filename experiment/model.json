@@ -1,0 +1,122 @@
+{
+    "1": {
+        "layers": 20,
+        "hidden": 2048
+    },
+    "2": {
+        "layers": 40,
+        "hidden": 2048
+    },
+    "3": {
+        "layers": 60,
+        "hidden": 2048
+    },
+    "3.5": {
+        "layers": 70,
+        "hidden": 2048
+    },
+    "4": {
+        "layers": 64,
+        "hidden": 2304
+    },
+    "5": {
+        "layers": 44,
+        "hidden": 3072
+    },
+    "6": {
+        "layers": 53,
+        "hidden": 3072
+    },
+    "7": {
+        "layers": 62,
+        "hidden": 3072
+    },
+    "8": {
+        "layers": 72,
+        "hidden": 3072
+    },
+    "10": {
+        "layers": 50,
+        "hidden": 4096
+    },
+    "11": {
+        "layers": 55,
+        "hidden": 4096
+    },
+    "12": {
+        "layers": 60,
+        "hidden": 4096
+    },
+    "13": {
+        "layers": 65,
+        "hidden": 4096
+    },
+    "15": {
+        "layers": 18,
+        "hidden": 8192 
+    },
+    "16": {
+        "layers": 80,
+        "hidden": 4096
+    },
+    "17": {
+        "layers": 85,
+        "hidden": 4096
+    },
+    "18": {
+        "layers": 90,
+        "hidden": 4096
+    },
+    "20": {
+        "layers": 25,
+        "hidden": 8192
+    },
+    "21": {
+        "layers": 26,
+        "hidden": 8192
+    },
+    "22": {
+        "layers": 27,
+        "hidden": 8192
+    },
+    "23": {
+        "layers": 28,
+        "hidden": 8192
+    },
+    "25": {
+        "layers": 30,
+        "hidden": 8192
+    },
+    "30": {
+        "layers": 36,
+        "hidden": 8192
+    },
+    "40": {
+        "layers": 50,
+        "hidden": 8192
+    },
+    "50": {
+        "layers": 60,
+        "hidden": 8192
+    },
+    "60": {
+        "layers": 75,
+        "hidden": 8192
+    },
+    "70": {
+        "layers": 20,
+        "hidden": 16384
+    },
+    "80": {
+        "layers": 100,
+        "hidden": 8192
+    },
+    "100": {
+        "layers": 45,
+        "hidden": 16384
+    },
+    "200": {
+        "layers": 90,
+        "hidden": 16384
+    }
+}
