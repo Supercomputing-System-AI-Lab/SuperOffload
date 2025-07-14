@@ -1,121 +1,121 @@
 {
-    "1": {
+    "1B": {
         "layers": 20,
         "hidden": 2048
     },
-    "2": {
+    "2B": {
         "layers": 40,
         "hidden": 2048
     },
-    "3": {
+    "3B": {
         "layers": 60,
         "hidden": 2048
     },
-    "3.5": {
+    "3.5B": {
         "layers": 70,
         "hidden": 2048
     },
-    "4": {
+    "4B": {
         "layers": 64,
         "hidden": 2304
     },
-    "5": {
+    "5B": {
         "layers": 44,
         "hidden": 3072
     },
-    "6": {
+    "6B": {
         "layers": 53,
         "hidden": 3072
     },
-    "7": {
+    "7B": {
         "layers": 62,
         "hidden": 3072
     },
-    "8": {
+    "8B": {
         "layers": 72,
         "hidden": 3072
     },
-    "10": {
+    "10B": {
         "layers": 50,
         "hidden": 4096
     },
-    "11": {
+    "11B": {
         "layers": 55,
         "hidden": 4096
     },
-    "12": {
+    "12B": {
         "layers": 60,
         "hidden": 4096
     },
-    "13": {
+    "13B": {
         "layers": 65,
         "hidden": 4096
     },
-    "15": {
+    "15B": {
         "layers": 18,
         "hidden": 8192 
     },
-    "16": {
+    "16B": {
         "layers": 80,
         "hidden": 4096
     },
-    "17": {
+    "17B": {
         "layers": 85,
         "hidden": 4096
     },
-    "18": {
+    "18B": {
         "layers": 90,
         "hidden": 4096
     },
-    "20": {
+    "20B": {
         "layers": 25,
         "hidden": 8192
     },
-    "21": {
+    "21B": {
         "layers": 26,
         "hidden": 8192
     },
-    "22": {
+    "22B": {
         "layers": 27,
         "hidden": 8192
     },
-    "23": {
+    "23B": {
         "layers": 28,
         "hidden": 8192
     },
-    "25": {
+    "25B": {
         "layers": 30,
         "hidden": 8192
     },
-    "30": {
+    "30B": {
         "layers": 36,
         "hidden": 8192
     },
-    "40": {
+    "40B": {
         "layers": 50,
         "hidden": 8192
     },
-    "50": {
+    "50B": {
         "layers": 60,
         "hidden": 8192
     },
-    "60": {
+    "60B": {
         "layers": 75,
         "hidden": 8192
     },
-    "70": {
+    "70B": {
         "layers": 20,
         "hidden": 16384
     },
-    "80": {
+    "80B": {
         "layers": 100,
         "hidden": 8192
     },
-    "100": {
+    "100B": {
         "layers": 45,
         "hidden": 16384
     },
-    "200": {
+    "200B": {
         "layers": 90,
         "hidden": 16384
     }
