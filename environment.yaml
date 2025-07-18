@@ -1,0 +1,39 @@
+name: ae
+channels:
+  - nvidia
+  - conda-forge
+  - defaults
+dependencies:
+  - gcc=11.4.0
+  - gcc_impl_linux-aarch64=11.4.0
+  - gcc_linux-aarch64=11.4.0
+  - pip=24.2
+  - pybind11-global=2.12.0
+  - python=3.11.11
+  - python-dateutil=2.9.0.post0
+  - python-gil=3.11.13
+  - python-tzdata=2025.2
+  - python-xxhash=3.5.0
+  - python_abi=3.11
+  - pyyaml=6.0.2
+  - setuptools=75.1.0
+  - pip:
+      - cmake==3.30.5
+      - cython==3.0.11
+      - datasets==3.0.1
+      - jinja2==3.1.4
+      - jq==1.9.1
+      - megatron==0.5.1
+      - megatron-core==0.3.0
+      - ninja==1.11.1.1
+      - nltk==3.9.1
+      - numpy==1.26.4
+      - nvidia-ml-py==12.560.30
+      - python-numa==0.5
+      - torch==2.7.0
+      - torchaudio
+      - torchmetrics
+      - torchvision
+      - tornado==6.4.2
+      - tqdm==4.66.5
+      - transformers==4.52.1
