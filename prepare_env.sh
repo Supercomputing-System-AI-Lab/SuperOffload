@@ -30,13 +30,12 @@ echo 'export DEEPSPEED_DIR="'$PWD'"' >> ~/.bashrc
 git checkout superoffload
 # Install DeepSpeed in development mode
 # Note: Installation may encounter issues at this step; if so, it can be installed later
-pip install -e .
 cd $BASE_DIR
 
 # Reload environment variables
 source ~/.bashrc
 # Create conda environment from the provided YAML file
-conda env create -f $BASE_DIR/SuperOffload/environment.yml
+conda env create -f $BASE_DIR/SuperOffload/environment.yaml
 # Activate the newly created environment
 conda activate ae
 
@@ -54,10 +53,13 @@ export CXX=aarch64-conda-linux-gnu-g++
 
 # Install NVIDIA Apex for mixed precision training
 git clone https://github.com/NVIDIA/apex
+cd apex
 git checkout 25.07
 # Install Apex with C++ and CUDA extensions
 pip install -v --disable-pip-version-check --no-cache-dir --no-build-isolation --config-settings "--build-option=--cpp_ext" --config-settings "--build-option=--cuda_ext" ./
 
+cd $DEEPSPEED_DIR
+pip install -e .
 # Potentional Issue 1
 # File ".../envs/ds/lib/python3.10/site-packages/torch/utils/cpp_extension.py", line 2016, in <listcomp>
 # supported_sm = [int(arch.split('_')[1]) for arch in torch.cuda.get_arch_list() if 'sm_' in arch]
