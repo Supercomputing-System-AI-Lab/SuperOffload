@@ -1,13 +1,27 @@
 #!/bin/bash
 
-set -euo pipefail
+#SBATCH --account=bcjw-dtai-gh
+#SBATCH --job-name=single_gpu
+#SBATCH --partition=ghx4
+#SBATCH --mem=732g
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --gpus-per-node=4
+#SBATCH --cpus-per-task=288
+#SBATCH --time=00:30:00
+#SBATCH --output=one_chip.log
+#SBATCH --error=one_chip.err
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+module reset
+source ~/.bashrc
+conda activate ae
+module load cuda/12.6.1
+export NCCL_DEBUG=WARN
+
 
 MODE="${1:-}"
 MODEL_SIZE="${2:-}"
-MICRO_BATCH="${3:-}"
-ACTIVATION_CHECKPOINTING="${4:-}"
+MICRO_BATCH_SIZE="${3:-8}"
 
 VALID_MODES=("prism" "zero_offload" "zero_infinity")
 if [[ ! " ${VALID_MODES[@]} " =~ " ${MODE} " ]]; then
@@ -15,34 +29,25 @@ if [[ ! " ${VALID_MODES[@]} " =~ " ${MODE} " ]]; then
     exit 1
 fi
 
-MODEL_SIZE_JSON="${SCRIPT_DIR}/../model.json"
+MODEL_SIZE_JSON="${SUPEROFFLOAD_DIR}/experiment/model.json"
 if ! [[ -f "$MODEL_SIZE_JSON" ]]; then
     echo "Model size JSON not found: $MODEL_SIZE_JSON"
     exit 1
 fi
 
+
+
 HIDDEN=$(jq -r --arg model_size "$MODEL_SIZE" '.[$model_size].hidden' "$MODEL_SIZE_JSON")
 LAYERS=$(jq -r --arg model_size "$MODEL_SIZE" '.[$model_size].layers' "$MODEL_SIZE_JSON")
 
-if [[ -z "$HIDDEN" || -z "$LAYERS" || "$HIDDEN" == "null" || "$LAYERS" == "null" ]]; then
-    echo "Invalid MODEL_SIZE: '$MODEL_SIZE'. Please check $MODEL_SIZE_JSON."
-    exit 1
-fi
-
-DATA_PATH="${SCRIPT_DIR}/../../training_datasets"
-
+echo "########################################################"
+echo "MODE: $MODE"
 echo "MODEL_SIZE: $MODEL_SIZE"
-echo "MICRO_BATCH: $MICRO_BATCH"
-echo "ACTIVATION_CHECKPOINTING: $ACTIVATION_CHECKPOINTING"
-echo "HIDDEN: $HIDDEN"
-echo "LAYERS: $LAYERS"
+echo "########################################################"
 
-AC_CONFIG=""
-if [[ "$ACTIVATION_CHECKPOINTING" == "true" ]]; then
-    AC_CONFIG="--checkpoint-activations --deepspeed-activation-checkpointing"
-fi
+DATA_PATH="${SUPEROFFLOAD_DIR}/training_datasets"
 
-DEEPSPEED_CONFIG="${SCRIPT_DIR}/${MODE}.json"
+DEEPSPEED_CONFIG="${SUPEROFFLOAD_DIR}/experiment/throughput/${MODE}.json"
 if ! [[ -f "$DEEPSPEED_CONFIG" ]]; then
     echo "DeepSpeed config not found: $DEEPSPEED_CONFIG"
     exit 1
@@ -51,19 +56,17 @@ fi
 deepspeed \
     --num_nodes 1 \
     --num_gpus 1 \
-    --bind_cores_to_rank \
-    --bind_core_list 72-144 \
-    "${MEGATRON_DEEPSPEED_DIR}/pretrain_gpt.py" \
+    "${MEGATRON_DIR}/pretrain_gpt.py" \
     --tensor-model-parallel-size 1 \
     --pipeline-model-parallel-size 1 \
     --ds-sequence-parallel-size 1 \
     --num-layers "$LAYERS" \
     --hidden-size "$HIDDEN" \
     --num-attention-heads 32 \
-    --seq-length 2048 \
+    --seq-length 1024 \
     --loss-scale 12 \
-    --max-position-embeddings 2048 \
-    --micro-batch-size "$MICRO_BATCH" \
+    --max-position-embeddings 1024 \
+    --micro-batch-size $MICRO_BATCH_SIZE \
     --global-batch-size 8 \
     --train-iters 100 \
     --lr 5.0e-5 \
@@ -90,4 +93,5 @@ deepspeed \
     --deepspeed_config="$DEEPSPEED_CONFIG" \
     --zero-stage=3 \
     --no-pipeline-parallel \
-    ${AC_CONFIG}
+    --checkpoint-activations \
+    --deepspeed-activation-checkpointing
