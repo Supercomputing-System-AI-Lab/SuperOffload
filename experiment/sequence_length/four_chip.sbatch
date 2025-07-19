@@ -15,10 +15,11 @@
 
 MODE="${1:-}"
 MODEL_SIZE="${2:-}"
-MICRO_BATCH_SIZE="${3:-4}"
+SEQUENCE_LENGTH="${3:-}"
+MICRO_BATCH_SIZE="${4:-1}"
 
-VALID_MODES=("prism" "zero_offload" "zero_infinity")
-if [[ ! " ${VALID_MODES[@]} " =~ " ${MODE} " ]]; then
+VALID_MODES=("prism-ulysses" "ulysses")
+if [[ ! " ${VALID_MODES[*]} " =~ " ${MODE} " ]]; then
     echo "Invalid mode: '${MODE}'. Valid modes are: ${VALID_MODES[*]}"
     exit 1
 fi
@@ -37,6 +38,12 @@ echo "MODE: $MODE"
 echo "MODEL_SIZE: $MODEL_SIZE"
 echo "########################################################"
 
+offload_config=""
+if [[ "$MODE" == "prism-ulysses" ]]; then
+    offload_config="--cpu-optimizer"
+fi
+
+
 echo "SLURM_JOB_NODELIST: $SLURM_JOB_NODELIST"
 # Setup variables for torchrun rdzv_endpoint
 nodes=( $( scontrol show hostnames $SLURM_JOB_NODELIST ) )
@@ -48,7 +55,7 @@ echo "Head node IP: $head_node_ip"
 
 DATA_PATH="${SUPEROFFLOAD_DIR}/training_datasets"
 
-DEEPSPEED_CONFIG="${SUPEROFFLOAD_DIR}/experiment/throughput/${MODE}.json"
+DEEPSPEED_CONFIG="${SUPEROFFLOAD_DIR}/experiment/sequence_length/${MODE}.json"
 if ! [[ -f "$DEEPSPEED_CONFIG" ]]; then
     echo "DeepSpeed config not found: $DEEPSPEED_CONFIG"
     exit 1
@@ -68,15 +75,16 @@ srun ~/miniconda3/envs/ae/bin/torchrun --nnodes ${SLURM_NNODES} \
     --rdzv_id $RANDOM --rdzv_backend c10d \
     --rdzv_endpoint="$head_node_ip:29500" \
     "${MEGATRON_DIR}/pretrain_gpt.py" \
+    --use-flash-attn-v2 \
     --tensor-model-parallel-size 1 \
     --pipeline-model-parallel-size 1 \
-    --ds-sequence-parallel-size 1 \
+    --ds-sequence-parallel-size 4 \
     --num-layers "$LAYERS" \
     --hidden-size "$HIDDEN" \
     --num-attention-heads 32 \
-    --seq-length 1024 \
+    --seq-length "$SEQUENCE_LENGTH" \
     --loss-scale 12 \
-    --max-position-embeddings 1024 \
+    --max-position-embeddings "$SEQUENCE_LENGTH" \
     --micro-batch-size $MICRO_BATCH_SIZE \
     --global-batch-size 16 \
     --train-iters 100 \
@@ -99,10 +107,10 @@ srun ~/miniconda3/envs/ae/bin/torchrun --nnodes ${SLURM_NNODES} \
     --fp16 \
     --exit-interval 10 \
     --make-vocab-size-divisible-by 256 \
-    --cpu-optimizer \
     --deepspeed \
     --deepspeed_config="$DEEPSPEED_CONFIG" \
     --zero-stage=3 \
     --no-pipeline-parallel \
     --checkpoint-activations \
-    --deepspeed-activation-checkpointing
+    --deepspeed-activation-checkpointing \
+     $offload_config \
