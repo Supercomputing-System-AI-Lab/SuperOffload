@@ -8,15 +8,14 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=1
 #SBATCH --cpus-per-task=288
-#SBATCH --time=01:00:00
-#SBATCH --output=four_chip.log
-#SBATCH --error=four_chip.err
+#SBATCH --time=04:00:00
+#SBATCH --output=four_chip_long_seq.log
+#SBATCH --error=four_chip_long_seq.err
 
 
 MODE="${1:-}"
 MODEL_SIZE="${2:-}"
 SEQUENCE_LENGTH="${3:-}"
-MICRO_BATCH_SIZE="${4:-1}"
 
 VALID_MODES=("prism-ulysses" "ulysses")
 if [[ ! " ${VALID_MODES[*]} " =~ " ${MODE} " ]]; then
@@ -85,8 +84,8 @@ srun ~/miniconda3/envs/ae/bin/torchrun --nnodes ${SLURM_NNODES} \
     --seq-length "$SEQUENCE_LENGTH" \
     --loss-scale 12 \
     --max-position-embeddings "$SEQUENCE_LENGTH" \
-    --micro-batch-size $MICRO_BATCH_SIZE \
-    --global-batch-size 16 \
+    --micro-batch-size 1 \
+    --global-batch-size 1 \
     --train-iters 100 \
     --lr 5.0e-5 \
     --min-lr 1.e-5 \
@@ -113,4 +112,9 @@ srun ~/miniconda3/envs/ae/bin/torchrun --nnodes ${SLURM_NNODES} \
     --no-pipeline-parallel \
     --checkpoint-activations \
     --deepspeed-activation-checkpointing \
+    --partition-activations \
+    --contigious-checkpointing \
+    --checkpoint-in-cpu \
+    --fp16-lm-cross-entropy \
+    --empty-unused-memory-level 2 \
      $offload_config \
